@@ -1,0 +1,6 @@
+#ignored files and folders
+/.idea
+/__pycache__
+/pars_env
+city.txt
+.env
