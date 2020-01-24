@@ -68,6 +68,16 @@ def get_hh_api(base_url, headers, name):
     return vacancy_data
 
 
+def show_table(vacancies_data, table_title, languages):
+    vacancy_table = [['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']]
+    for language in languages:
+        vacancy_table.append(
+            [language, vacancies_data[language]['vacancies_found'], vacancies_data[language]['vacancies_processed'],
+             vacancies_data[language]['average_salary']])
+    table_instance = AsciiTable(vacancy_table, table_title)
+    print(table_instance.table)
+
+
 def main():
     load_dotenv(verbose=True)
     secret_key = os.getenv('SJ_SECRET_KEY')
@@ -77,31 +87,17 @@ def main():
     headers_hh = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'}
     languages = ['python', 'c', 'c#', 'c++', 'java', 'javascript', 'ruby', 'go', '1c']
-    direct_sj = {}
-    direct_hh = {}
-
-    vacancy_sj_table = [['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']]
-    vacancy_hh_table = [['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']]
+    sj_vacancies_data = {}
+    hh_vacancies_data = {}
+    sj_table_title = 'SuperJob Moscow'
+    hh_table_title = 'Headhunter Moscow'
 
     for language in languages:
-        direct_sj[language] = get_sj_api(base_url_sj, headers_sj, language)
-        vacancy_sj_table.append(
-            [language, direct_sj[language]['vacancies_found'], direct_sj[language]['vacancies_processed'],
-             direct_sj[language]['average_salary']])
-        direct_hh[language] = get_hh_api(base_url_hh, headers_hh, language)
-        vacancy_hh_table.append(
-            [language, direct_hh[language]['vacancies_found'], direct_hh[language]['vacancies_processed'],
-             direct_hh[language]['average_salary']])
+        sj_vacancies_data[language] = get_sj_api(base_url_sj, headers_sj, language)
+        hh_vacancies_data[language] = get_hh_api(base_url_hh, headers_hh, language)
 
-    sj_title = 'SuperJob Moscow'
-    hh_title = 'Headhunter Moscow'
-
-    table_instance = AsciiTable(vacancy_sj_table, sj_title)
-    print(table_instance.table)
-
-    table_instance = AsciiTable(vacancy_hh_table, hh_title)
-    print(table_instance.table)
-
+    show_table(sj_vacancies_data, sj_table_title, languages)
+    show_table(hh_vacancies_data, hh_table_title, languages)
 
 if __name__ == '__main__':
     main()
